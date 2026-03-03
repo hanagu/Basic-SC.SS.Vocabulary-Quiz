@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Vocabulary Quiz</title>
+    <style>
+        :root {
+            --primary-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --btn-bg: #e0e6ed;
+            --btn-hover: #cbd5e1;
+            --correct-color: #4ade80;
+            --wrong-color: #f87171;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .status {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-sub);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 200px;
+            justify-content: center;
+        }
+
+        .word {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--text-main);
+        }
+
+        .pronunciation {
+            font-size: 1.5rem;
+            color: #888;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: var(--btn-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .option-kr { font-weight: bold; font-size: 1.2rem; color: #222; }
+        .option-cn { font-size: 0.95rem; color: #444; }
+        .option-jp { font-size: 0.95rem; color: #444; }
+
+        .correct {
+            background-color: #dcfce7 !important;
+            border-color: var(--correct-color) !important;
+            color: #166534;
+        }
+
+        .wrong {
+            background-color: #fee2e2 !important;
+            border-color: var(--wrong-color) !important;
+            color: #991b1b;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: #fff;
+            box-shadow: var(--shadow);
+            color: var(--text-main);
+        }
+
+        .control-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .next-btn {
+            background-color: #3b82f6;
+            color: white;
+            visibility: hidden;
+        }
+
+        .next-btn:hover {
+            background-color: #2563eb;
+        }
+
+        .next-btn.visible {
+            visibility: visible;
+        }
+
+        /* End Screen */
+        .end-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+            background-color: var(--card-bg);
+            padding: 50px 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .end-screen h2 {
+            font-size: 2.5rem;
+            color: #3b82f6;
+        }
+
+        .end-screen p {
+            font-size: 1.2rem;
+            color: var(--text-sub);
+        }
+
+        .restart-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .restart-btn:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .word { font-size: 2.8rem; }
+            .card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+    <div class="header">
+        <div class="status">Round <span id="round-display">1</span></div>
+        <div class="status"><span id="current-count">1</span> / <span id="total-count">0</span></div>
+    </div>
+
+    <div class="card">
+        <div class="word" id="word-display">word</div>
+        <div class="pronunciation" id="pronunciation-display">/wɜːd/</div>
+    </div>
+
+    <div class="options-grid" id="options-container">
+        <!-- Buttons will be generated here -->
+    </div>
+
+    <div class="controls">
+        <button class="control-btn next-btn" id="next-btn" onclick="nextQuestion()">Next Word ➔</button>
+    </div>
+</div>
+
+<div class="container end-screen" id="end-screen">
+    <h2>Congratulations! 🎉</h2>
+    <p>You have successfully mastered all the words in this set.</p>
+    <button class="restart-btn" onclick="resetFullGame()">Start Fresh (All Words)</button>
+</div>
+
+<script>
+    // Data mapping based on the provided list
+    const vocabularyData = [
+        { word: "element", pron: "/ˈelɪmənt/", kr: "요소, 성분", cn: "元素 (yuán sù)", jp: "要素 (ようそ)" },
+        { word: "factor", pron: "/ˈfæktər/", kr: "요인, 인자", cn: "因素 (yīn sù)", jp: "要因 (よういん)" },
+        { word: "relationship", pron: "/rɪˈleɪʃnʃɪp/", kr: "관계, 관련", cn: "关系 (guān xì)", jp: "関係 (かんけい)" },
+        { word: "increase", pron: "/ɪnˈkriːs/", kr: "증가하다", cn: "增加 (zēng jiā)", jp: "増加する (ぞうかする)" },
+        { word: "decrease", pron: "/dɪˈkriːs/", kr: "감소하다", cn: "减少 (jiǎn shǎo)", jp: "減少する (げんしょうする)" },
+        { word: "similar", pron: "/ˈsɪmələr/", kr: "비슷한, 유사한", cn: "相似的 (xiāng sì de)", jp: "似ている (にている)" },
+        { word: "different", pron: "/ˈdɪfrənt/", kr: "다른, 차이가 나는", cn: "不同的 (bù tóng de)", jp: "異なる (ことなる)" },
+        { word: "communication", pron: "/kəˌmjuːnɪˈkeɪʃn/", kr: "의사소통, 통신", cn: "交流 (jiāo liú)", jp: "コミュニケーション" },
+        { word: "representation", pron: "/ˌreprɪzenˈteɪʃn/", kr: "표현, 묘사, 대표", cn: "表现, 代表 (biǎo xiàn, dài biǎo)", jp: "表現, 描写 (ひょうげん, びょうしゃ)" },
+        { word: "chart", pron: "/tʃɑːrt/", kr: "도표, 차트", cn: "图表 (tú biǎo)", jp: "図表 (ずひょう)" },
+        { word: "graph", pron: "/ɡræf/", kr: "그래프", cn: "图表, 曲线图 (tú biǎo, qū xiàn tú)", jp: "グラフ" },
+        { word: "diagram", pron: "/ˈdaɪəɡræm/", kr: "도해, 다이어그램", cn: "图解 (tú jiě)", jp: "図解 (ずかい)" },
+        { word: "model", pron: "/ˈmɑːdl/", kr: "모형, 모델", cn: "模型 (mó xíng)", jp: "模型 (もけい)" },
+        { word: "demonstrate", pron: "/ˈdemənstreɪt/", kr: "입증하다, 보여주다", cn: "证明, 演示 (zhèng míng, yǎn shì)", jp: "実証する, 示す (じっしょうする, しめす)" },
+        { word: "describe", pron: "/dɪˈskraɪb/", kr: "묘사하다, 서술하다", cn: "描述 (miáo shù)", jp: "描写する (びょうしゃする)" },
+        { word: "summarize", pron: "/ˈsʌməraɪz/", kr: "요약하다", cn: "总结 (zǒng jié)", jp: "要約する (ようやくする)" },
+        { word: "infer", pron: "/ɪnˈfɜːr/", kr: "추론하다", cn: "推断 (tuī duàn)", jp: "推論する (すいろんする)" },
+        { word: "characteristic", pron: "/ˌkærəktəˈrɪstɪk/", kr: "특징, 특성", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)" },
+        { word: "feature", pron: "/ˈfiːtʃər/", kr: "특징, 이목구비", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)" },
+        { word: "property", pron: "/ˈprɑːpərti/", kr: "성질, 재산", cn: "性质, 财产 (xìng zhì, cái chǎn)", jp: "性質, 財産 (せいしつ, ざいさん)" },
+        { word: "function", pron: "/ˈfʌŋkʃn/", kr: "기능, 작용", cn: "功能 (gōng néng)", jp: "機能 (きのう)" },
+        { word: "variety", pron: "/vəˈraɪəti/", kr: "다양성, 품종", cn: "多样性, 品种 (duō yàng xìng, pǐn zhǒng)", jp: "多様性 (たようせい)" },
+        { word: "analyze", pron: "/ˈænəlaɪz/", kr: "분석하다", cn: "分析 (fēn xī)", jp: "分析する (ぶんせきする)" },
+        { word: "examine", pron: "/ɪɡˈzæmɪn/", kr: "조사하다, 검토하다", cn: "检查 (jiǎn chá)", jp: "調査する (ちょうさする)" },
+        { word: "evaluate", pron: "/ɪˈvæljueɪt/", kr: "평가하다", cn: "评估 (píng gū)", jp: "評価する (ひょうかする)" },
+        { word: "represent", pron: "/ˌreprɪˈzent/", kr: "대표하다, 나타내다", cn: "代表 (dài biǎo)", jp: "代表する, 表す (だいひょうする, あらわす)" },
+        { word: "organize", pron: "/ˈɔːrɡənaɪz/", kr: "조직하다, 정리하다", cn: "组织 (zǔ zhī)", jp: "組織する, 整理する (そしきする, せいりする)" },
+        { word: "period", pron: "/ˈpɪriəd/", kr: "기간, 시대", cn: "时期 (shí qī)", jp: "期間, 時代 (きかん, じだい)" },
+        { word: "region", pron: "/ˈriːdʒən/", kr: "지역, 지방", cn: "地区 (dì qū)", jp: "地域 (ちいき)" },
+        { word: "system", pron: "/ˈsɪstəm/", kr: "체계, 시스템", cn: "系统 (xì tǒng)", jp: "体系, システム (たいけい)" },
+        { word: "quantity", pron: "/ˈkwɑːntəti/", kr: "양, 수량", cn: "数量 (shù liàng)", jp: "量, 数量 (りょう, すうりょう)" },
+        { word: "quality", pron: "/ˈkwɑːləti/", kr: "질, 품질", cn: "质量 (zhì liàng)", jp: "質, 品質 (しつ, ひんしつ)" },
+        { word: "amount", pron: "/əˈmaʊnt/", kr: "총액, 양", cn: "数量, 总额 (shù liàng, zǒng é)", jp: "量, 総額 (りょう, そうがく)" },
+        { word: "investigate", pron: "/ɪnˈvestɪɡeɪt/", kr: "조사하다, 수사하다", cn: "调查 (diào chá)", jp: "調査する (ちょうさする)" },
+        { word: "survey", pron: "/ˈsɜːrveɪ/", kr: "설문조사, 조사하다", cn: "调查 (diào chá)", jp: "調査, 測量 (ちょうさ, そくりょう)" },
+        { word: "research", pron: "/ˈriːsɜːrtʃ/", kr: "연구, 조사", cn: "研究 (yán jiū)", jp: "研究 (けんきゅう)" },
+        { word: "record", pron: "/ˈrekərd/", kr: "기록, 기록하다", cn: "记录 (jì lù)", jp: "記録する (きろくする)" },
+        { word: "collect", pron: "/kəˈlekt/", kr: "수집하다, 모으다", cn: "收集 (shōu jí)", jp: "集める (あつめる)" },
+        { word: "evidence", pron: "/ˈevɪdəns/", kr: "증거, 흔적", cn: "证据 (zhèng jù)", jp: "証拠 (しょうこ)" },
+        { word: "data", pron: "/ˈdeɪtə/", kr: "자료, 데이터", cn: "数据 (shù jù)", jp: "データ" },
+        { word: "result", pron: "/rɪˈzʌlt/", kr: "결과", cn: "结果 (jié guǒ)", jp: "結果 (けっか)" },
+        { word: "conclusion", pron: "/kənˈkluːʒn/", kr: "결론", cn: "结论 (jié lùn)", jp: "結論 (けつろん)" },
+        { word: "reason", pron: "/ˈriːzn/", kr: "이유, 원인", cn: "原因 (yuán yīn)", jp: "理由 (りゆう)" },
+        { word: "source", pron: "/sɔːrs/", kr: "원천, 출처", cn: "来源 (lái yuán)", jp: "源, 出処 (みなもと, しゅっしょ)" },
+        { word: "explain", pron: "/ɪkˈspleɪn/", kr: "설명하다", cn: "解释 (jiě shì)", jp: "説明する (せつめいする)" },
+        { word: "predict", pron: "/prɪˈdɪkt/", kr: "예측하다", cn: "预测 (yù cè)", jp: "予測する (よそくする)" },
+        { word: "refer to", pron: "/rɪˈfɜːr tu/", kr: "~을 언급하다, 참조하다", cn: "提及, 参考 (tí jí, cān kǎo)", jp: "言及する, 参照する (げんきゅうする, さんしょうする)" },
+        { word: "define", pron: "/dɪˈfaɪn/", kr: "정의하다", cn: "定义 (dìng yì)", jp: "定義する (ていぎする)" },
+        { word: "cause", pron: "/kɔːz/", kr: "원인, 야기하다", cn: "原因, 导致 (yuán yīn, dǎo zhì)", jp: "原因, 引き起こす (げんいん, ひきおこす)" },
+        { word: "effect", pron: "/ɪˈfekt/", kr: "영향, 결과, 효과", cn: "效果, 影响 (xiào guǒ, yǐng xiǎng)", jp: "効果, 影響 (こうか, えいきょう)" },
+        { word: "affect", pron: "/əˈfekt/", kr: "영향을 미치다", cn: "影响 (yǐng xiǎng)", jp: "影響を及ぼす (えいきょうをおよぼす)" },
+        { word: "impact", pron: "/ˈɪmpækt/", kr: "강력한 영향, 충격", cn: "影响, 冲击 (yǐng xiǎng, chōng jī)", jp: "影響, 衝撃 (えいきょう, しょうげき)" },
+        { word: "influence", pron: "/ˈɪnfluəns/", kr: "영향력, 영향을 주다", cn: "影响 (yǐng xiǎng)", jp: "影響 (えいきょう)" },
+        { word: "structure", pron: "/ˈstrʌktʃər/", kr: "구조, 체계", cn: "结构 (jié gòu)", jp: "構造 (こうぞう)" },
+        { word: "environment", pron: "/ɪnˈvaɪrənmənt/", kr: "환경", cn: "环境 (huán jìng)", jp: "環境 (かんきょう)" },
+        { word: "observe", pron: "/əbˈzɜːrv/", kr: "관찰하다, 준수하다", cn: "观察 (guān chá)", jp: "観察する (かんさつする)" },
+        { word: "notice", pron: "/ˈnoʊtɪs/", kr: "알아차리다, 공지", cn: "注意, 通知 (zhù yì, tōng zhī)", jp: "気付く, 知らせ (きづく, しらせ)" },
+        { word: "compare", pron: "/kəmˈper/", kr: "비교하다", cn: "比较 (bǐ jiào)", jp: "比較する (ひかくする)" },
+        { word: "contrast", pron: "/ˈkɑːntræst/", kr: "대조하다, 차이", cn: "对比 (duì bǐ)", jp: "対照する (たいしょうする)" },
+        { word: "classify", pron: "/ˈklæsɪfaɪ/", kr: "분류하다", cn: "分类 (fēn lèi)", jp: "分類する (ぶんるいする)" },
+        { word: "identify", pron: "/aɪˈdentɪfaɪ/", kr: "확인하다, 식별하다", cn: "识别, 鉴定 (shí bié, jiàn dìng)", jp: "特定する (とくていする)" },
+        { word: "process", pron: "/ˈprɑːses/", kr: "과정, 처리하다", cn: "过程, 处理 (guò chéng, chǔ lǐ)", jp: "過程, 処理する (かてい, しょりする)" },
+        { word: "experiment", pron: "/ɪkˈsperɪmənt/", kr: "실험", cn: "实验 (shí yàn)", jp: "実験 (じっけん)" },
+        { word: "conduct", pron: "/kənˈdʌkt/", kr: "수행하다, 행동", cn: "进行, 行为 (jìn xíng, xíng wéi)", jp: "実施する, 行動 (じっしする, こうどう)" },
+        { word: "measure", pron: "/ˈmeʒər/", kr: "측정하다, 조치", cn: "测量, 措施 (cè liáng, cuò shī)", jp: "測る, 措置 (はかる, そち)" }
+    ];
+
+    let currentPool = [];
+    let incorrectWordsPool = [];
+    let currentQuestion = null;
+    let roundNum = 1;
+    let answered = false;
+    let poolIndex = 0;
+
+    // Utility: Shuffle Array (Fisher-Yates)
+    function shuffleArray(array) {
+        let curId = array.length;
+        while (0 !== curId) {
+            let randId = Math.floor(Math.random() * curId);
+            curId -= 1;
+            let tmp = array[curId];
+            array[curId] = array[randId];
+            array[randId] = tmp;
+        }
+        return array;
+    }
+
+    // Initialize full game
+    function resetFullGame() {
+        document.getElementById('quiz-container').style.display = 'flex';
+        document.getElementById('end-screen').style.display = 'none';
+        roundNum = 1;
+        startRound(vocabularyData);
+    }
+
+    // Start a round with a given set of words
+    function startRound(wordsArray) {
+        currentPool = shuffleArray([...wordsArray]);
+        incorrectWordsPool = [];
+        poolIndex = 0;
+        document.getElementById('round-display').innerText = roundNum;
+        document.getElementById('total-count').innerText = currentPool.length;
+        loadNextQuestion();
+    }
+
+    // Load the next question into UI
+    function loadNextQuestion() {
+        if (poolIndex >= currentPool.length) {
+            handleRoundEnd();
+            return;
+        }
+
+        answered = false;
+        currentQuestion = currentPool[poolIndex];
+        
+        document.getElementById('current-count').innerText = poolIndex + 1;
+        document.getElementById('word-display').innerText = currentQuestion.word;
+        document.getElementById('pronunciation-display').innerText = currentQuestion.pron;
+        
+        document.getElementById('next-btn').classList.remove('visible');
+
+        generateOptions();
+    }
+
+    // Generate 4 multiple choice options
+    function generateOptions() {
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        // Pick 3 random wrong answers
+        let wrongOptions = vocabularyData.filter(v => v.word !== currentQuestion.word);
+        wrongOptions = shuffleArray(wrongOptions).slice(0, 3);
+        
+        let allOptions = [currentQuestion, ...wrongOptions];
+        allOptions = shuffleArray(allOptions);
+
+        allOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `
+                <span class="option-kr">${opt.kr}</span>
+                <span class="option-cn">${opt.cn}</span>
+                <span class="option-jp">${opt.jp}</span>
+            `;
+            
+            btn.onclick = () => checkAnswer(opt.word, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    // Handle answer click
+    function checkAnswer(selectedWord, btnElement) {
+        if (answered) return;
+        answered = true;
+
+        const isCorrect = selectedWord === currentQuestion.word;
+        const allButtons = document.querySelectorAll('.option-btn');
+
+        allButtons.forEach(btn => {
+            btn.disabled = true;
+            // Find and highlight correct answer
+            const krSpan = btn.querySelector('.option-kr').innerText;
+            if (krSpan === currentQuestion.kr) {
+                btn.classList.add('correct');
+            }
+        });
+
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+        } else {
+            btnElement.classList.add('wrong');
+            // Store incorrect word to show in next round
+            incorrectWordsPool.push(currentQuestion);
+        }
+
+        document.getElementById('next-btn').classList.add('visible');
+    }
+
+    // Handle next button click
+    function nextQuestion() {
+        if (!answered) return;
+        poolIndex++;
+        loadNextQuestion();
+    }
+
+    // Handle end of current pool
+    function handleRoundEnd() {
+        if (incorrectWordsPool.length > 0) {
+            // Start next round with only incorrect words
+            roundNum++;
+            // Remove duplicates just in case
+            const uniqueIncorrect = [...new Set(incorrectWordsPool)];
+            startRound(uniqueIncorrect);
+        } else {
+            // Player won
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'flex';
+        }
+    }
+
+    // Start the app initially
+    resetFullGame();
+
+</script>
+
+</body>
+</html>
