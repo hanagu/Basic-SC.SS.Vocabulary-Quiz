@@ -376,9 +376,20 @@
         const container = document.getElementById('options-container');
         container.innerHTML = '';
 
-        // Pick 3 random wrong answers
-        let wrongOptions = vocabularyData.filter(v => v.word !== currentQuestion.word);
-        wrongOptions = shuffleArray(wrongOptions).slice(0, 3);
+        // Pick 3 random wrong answers (preventing duplicate meanings)
+        let wrongOptions = [];
+        let usedMeanings = new Set([currentQuestion.kr.split(',')[0].trim()]); 
+        
+        let availableWrong = shuffleArray(vocabularyData.filter(v => v.word !== currentQuestion.word));
+        
+        for (let opt of availableWrong) {
+            let mainMeaning = opt.kr.split(',')[0].trim();
+            if (!usedMeanings.has(mainMeaning)) {
+                wrongOptions.push(opt);
+                usedMeanings.add(mainMeaning);
+            }
+            if (wrongOptions.length === 3) break;
+        }
         
         let allOptions = [currentQuestion, ...wrongOptions];
         allOptions = shuffleArray(allOptions);
@@ -451,9 +462,10 @@
     resetFullGame();
 
 </script>
-  <!-- Watermark: Ms. Hana's ELL Class -->
-  <div class="fixed top-4 right-4 text-orange-400/60 font-bold text-xl sm:text-2xl tracking-widest pointer-events-none select-none z-[9999]">
-    Ms. Hana's ELL Class
+
+  <!-- Universal CSS Watermark (Works perfectly without Tailwind) -->
+  <div style="position: fixed; top: 16px; right: 16px; color: rgba(251, 146, 60, 0.6); font-weight: bold; font-size: 1.1rem; text-align: right; line-height: 1.2; letter-spacing: 0.05em; pointer-events: none; user-select: none; z-index: 9999;">
+    Ms. Hana's<br>ELL Class
   </div>
 </body>
 </html>
