@@ -248,7 +248,7 @@
 
         @media (max-width: 600px) {
             .options-grid { grid-template-columns: 1fr; }
-            .word { font-size: 2.8rem; }
+            .word { font-size: 2.5rem; }
             .card { padding: 30px 20px; }
         }
     </style>
@@ -291,18 +291,24 @@
         <div class="status"><span id="current-count">1</span> / <span id="total-count">0</span></div>
     </div>
 
-    <div class="card relative">
-        <!-- 발음 듣기용 스피커 버튼 -->
-        <button onclick="playTTS()" class="absolute top-6 right-6 p-4 bg-slate-50 text-blue-600 rounded-full hover:bg-blue-100 hover:text-blue-700 transition shadow-sm border border-slate-200" title="Listen to pronunciation">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            </svg>
-        </button>
+    <div class="card">
+        <!-- 단어 카드 영역의 수평 정렬을 도모하여 스피커 버튼을 단어 왼쪽으로 나란히 배치했습니다 -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
+            <!-- 발음 듣기용 스피커 버튼 (단어의 왼쪽에 정렬) -->
+            <button onclick="playTTS()" class="p-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 hover:text-blue-700 transition shadow-sm border border-slate-200 shrink-0" title="Listen to pronunciation">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </button>
 
-        <div class="word font-black" id="word-display">word</div>
-        <div class="pronunciation animate-pulse" id="pronunciation-display">/wɜːd/</div>
+            <!-- 퀴즈 제시 단어 및 발음 기호 컨테이너 -->
+            <div class="flex flex-col items-center sm:items-start justify-center">
+                <div class="word font-black tracking-tight" id="word-display">word</div>
+                <div class="pronunciation animate-pulse mt-1" id="pronunciation-display">/wɜːd/</div>
+            </div>
+        </div>
     </div>
 
     <div class="options-grid" id="options-container">
@@ -324,9 +330,9 @@
     // Data mapping based on the provided list with simple English definitions added
     const vocabularyData = [
         { word: "element", pron: "/ˈelɪmənt/", kr: "요소, 성분", cn: "元素 (yuán sù)", jp: "要素 (ようそ)", def: "A basic or simple part of something bigger" },
-        { word: "factor", pron: "/ˈfæktər/", kr: "요인, 인자", cn: "因素 (yīn sù)", jp: "要因 (よういん)", def: "One of the things that causes a result" },
+        { word: "factor", pron: "/ˈfæktər/", kr: "요인, 인자", cn: "因素 (yīn sù)", jp: "要因 (ようい인)", def: "One of the things that causes a result" },
         { word: "relationship", pron: "/rɪˈleɪʃnʃɪp/", kr: "관계, 관련", cn: "关系 (guān xì)", jp: "関係 (かんけい)", def: "How two or more things are connected to each other" },
-        { word: "increase", pron: "/ɪnˈkriːs/", kr: "증가하다", cn: "增加 (zēng jiā)", jp: "増加する (ぞ우かする)", def: "To make or become larger in size or number" },
+        { word: "increase", pron: "/ɪnˈkriːs/", kr: "증가하다", cn: "增加 (zēng jiā)", jp: "増加する (ぞうかする)", def: "To make or become larger in size or number" },
         { word: "decrease", pron: "/dɪˈkriːs/", kr: "감소하다", cn: "减少 (jiǎn shǎo)", jp: "減少する (げんしょうする)", def: "To make or become smaller in size or number" },
         { word: "similar", pron: "/ˈsɪmələr/", kr: "비슷한, 유사한", cn: "相似的 (xiāng sì de)", jp: "似ている (にている)", def: "Looking or being almost the same, but not exact" },
         { word: "different", pron: "/ˈdɪfrənt/", kr: "다른, 차이가 나는", cn: "不同的 (bù tóng de)", jp: "異なる (ことなる)", def: "Not the same as another thing" },
@@ -349,7 +355,7 @@
         { word: "examine", pron: "/ɪɡˈzæmɪn/", kr: "조사하다, 검토하다", cn: "检查 (jiǎn chá)", jp: "調査する (ちょうさする)", def: "To look at something very closely to check it" },
         { word: "evaluate", pron: "/ɪˈvæljueɪt/", kr: "평가하다", cn: "评估 (píng gū)", jp: "評価する (ひょうかする)", def: "To judge how good or useful something is" },
         { word: "represent", pron: "/ˌreprɪˈzent/", kr: "대표하다, 나타내다", cn: "代表 (dài biǎo)", jp: "代表する, 表す (だいひょうする, あらわす)", def: "To stand for or be a sign of something" },
-        { word: "organize", pron: "/ˈɔːrɡənaɪz/", kr: "조직하다, 정리하다", cn: "组织 (zǔ zhī)", jp: "组织する, 整理する (そしきする, せいりする)", def: "To put things into a neat and clear order" },
+        { word: "organize", pron: "/ˈɔːrɡənaɪz/", kr: "조직하다, 정리하다", cn: "组织 (zǔ zhī)", jp: "组织する, 整理する (そし기하는, せいりする)", def: "To put things into a neat and clear order" },
         { word: "period", pron: "/ˈpɪriəd/", kr: "기간, 시대", cn: "时期 (shí qī)", jp: "期間, 時代 (きかん, じだい)", def: "A specific length of time in history or life" },
         { word: "region", pron: "/ˈriːdʒən/", kr: "지역, 지방", cn: "地区 (dì qū)", jp: "地域 (ちいき)", def: "A large area or part of a country or the world" },
         { word: "system", pron: "/ˈsɪstəm/", kr: "체계, 시스템", cn: "系统 (xì tǒng)", jp: "体系, 시스템 (たいけい)", def: "A set of parts working together to do a job" },
@@ -374,7 +380,7 @@
         { word: "cause", pron: "/kɔːz/", kr: "원인, 야기하다", cn: "原因, 导致 (yuán yīn, dǎo zhì)", jp: "原因, 引き起こす (げんいん, ひきおこす)", def: "Someone or something that makes something happen" },
         { word: "effect", pron: "/ɪˈfekt/", kr: "영향, 결과, 효과", cn: "效果, 影响 (xiào guǒ, yǐng xiǎng)", jp: "効果, 影響 (こうか, えいきょう)", def: "A change that happens because of a cause" },
         { word: "affect", pron: "/əˈfekt/", kr: "영향을 미치다", cn: "影响 (yǐng xiǎng)", jp: "影響を及ぼす (えいきょうをおよぼす)", def: "To make a change or have an effect on something" },
-        { word: "impact", pron: "/ˈɪmpækt/", kr: "강력한 영향, 충격", cn: "影响, 冲击 (yǐng xiǎng, chōng jī)", jp: "影响, 冲击 (えいきょう, しょうげき)", def: "A strong, powerful effect or influence" },
+        { word: "impact", pron: "/ˈɪmpækt/", kr: "강력한 영향, 충격", cn: "影响, 冲击 (yǐng xiǎng, chōng jī)", jp: "影響, 衝撃 (えいきょう, しょうげき)", def: "A strong, powerful effect or influence" },
         { word: "influence", pron: "/ˈɪnfluəns/", kr: "영향력, 영향을 주다", cn: "影响 (yǐng xiǎng)", jp: "影響 (えいきょう)", def: "The power to change how someone thinks or acts" },
         { word: "structure", pron: "/ˈstrʌktʃər/", kr: "구조, 체계", cn: "结构 (jié gòu)", jp: "構造 (こうぞう)", def: "How the parts of something are put together" },
         { word: "environment", pron: "/ɪnˈvaɪrənmənt/", kr: "환경", cn: "环境 (huán jìng)", jp: "環境 (かんきょう)", def: "The air, water, land, and natural world around us" },
