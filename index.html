@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English Vocabulary Quiz</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         :root {
             --primary-bg: #f4f7f6;
             --card-bg: #ffffff;
             --text-main: #333333;
             --text-sub: #666666;
-            --btn-bg: #e0e6ed;
-            --btn-hover: #cbd5e1;
             --correct-color: #4ade80;
             --wrong-color: #f87171;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
             --transition: all 0.3s ease;
         }
 
@@ -37,7 +39,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 750px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -47,9 +49,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 15px 24px;
             background-color: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
         }
 
@@ -61,14 +63,14 @@
 
         .card {
             background-color: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 24px;
             padding: 40px 30px;
             box-shadow: var(--shadow);
             text-align: center;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            min-height: 200px;
+            min-height: 220px;
             justify-content: center;
         }
 
@@ -86,79 +88,109 @@
             font-style: italic;
         }
 
+        /* 2x2 Grid 복원 및 모바일 반응형 처리 */
         .options-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
         }
 
+        /* 기본적으로 깨끗한 흰색 배경으로 설정 */
         .option-btn {
-            background-color: var(--btn-bg);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 20px 15px;
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 20px;
             font-size: 1rem;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .option-btn:hover {
-            background-color: var(--btn-hover);
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
             transform: translateY(-2px);
         }
 
         .option-btn:disabled {
             cursor: not-allowed;
             transform: none;
+            filter: none;
         }
 
-        .option-kr { font-weight: bold; font-size: 1.2rem; color: #222; }
-        .option-cn { font-size: 0.95rem; color: #444; }
-        .option-jp { font-size: 0.95rem; color: #444; }
+        .option-def {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            width: 100%;
+            line-height: 1.3;
+        }
 
+        .option-kr { font-weight: bold; font-size: 1.15rem; color: #1e3a8a; }
+        .option-cn { font-size: 0.9rem; color: #b91c1c; font-weight: 600; }
+        .option-jp { font-size: 0.9rem; color: #047857; font-weight: 600; }
+
+        /* 정답 피드백: 확실하고 진한 초록 테두리 및 엷은 배경 */
         .correct {
             background-color: #dcfce7 !important;
             border-color: var(--correct-color) !important;
+            color: #166534 !important;
+        }
+        .correct .option-def {
+            border-bottom-color: rgba(22, 101, 52, 0.2);
             color: #166534;
         }
 
+        /* 오답 피드백: 확실하고 진한 빨간 테두리 및 엷은 배경 */
         .wrong {
             background-color: #fee2e2 !important;
             border-color: var(--wrong-color) !important;
+            color: #991b1b !important;
+        }
+        .wrong .option-def {
+            border-bottom-color: rgba(153, 27, 27, 0.2);
             color: #991b1b;
         }
 
         .controls {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
+            margin-top: 10px;
         }
 
         .control-btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: var(--transition);
             background-color: #fff;
             box-shadow: var(--shadow);
             color: var(--text-main);
+            border: 1px solid #e2e8f0;
         }
 
         .control-btn:hover {
-            background-color: #f0f0f0;
+            background-color: #f8fafc;
         }
 
         .next-btn {
             background-color: #3b82f6;
             color: white;
             visibility: hidden;
+            border: none;
         }
 
         .next-btn:hover {
@@ -178,7 +210,7 @@
             text-align: center;
             background-color: var(--card-bg);
             padding: 50px 30px;
-            border-radius: 16px;
+            border-radius: 24px;
             box-shadow: var(--shadow);
         }
 
@@ -209,6 +241,11 @@
             transform: scale(1.05);
         }
 
+        /* Smart Copyright Badge styling */
+        .badge-container {
+            font-family: 'Segoe UI', sans-serif;
+        }
+
         @media (max-width: 600px) {
             .options-grid { grid-template-columns: 1fr; }
             .word { font-size: 2.8rem; }
@@ -218,15 +255,54 @@
 </head>
 <body>
 
+  <!-- Smart Copyright & Contact Badge (Hover to expand) -->
+  <div class="fixed top-4 right-4 z-[9999] group flex flex-col items-end badge-container">
+    <!-- Collapsed Badge -->
+    <div class="bg-orange-500 text-white font-bold text-sm sm:text-base px-4 py-2 rounded-full shadow-md cursor-help opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      © Ms. Hana
+    </div>
+    
+    <!-- Expanded Info Box -->
+    <div class="mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 text-sm text-slate-600 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 origin-top-right">
+      <h3 class="font-black text-slate-800 text-base mb-2 border-b border-slate-100 pb-2">© Hana (Hyuna) Gu</h3>
+      <ul class="space-y-2 mb-4 text-xs sm:text-sm">
+        <li class="flex items-start gap-2">
+          <span class="text-green-500 font-bold">✓</span>
+          <span>Free for <b>student self-study</b> and practice.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-red-500 font-bold">✗</span>
+          <span><b>Classroom use by other educators</b> requires explicit permission.</span>
+        </li>
+      </ul>
+      <div class="pt-3 border-t border-slate-100 text-xs sm:text-sm bg-slate-50 p-3 rounded-lg">
+        <p class="font-bold text-slate-700 mb-1">Need more levels or topics?</p>
+        <p>Contact for full access & licensing:<br>
+          <a href="mailto:hanagu.teaching@gmail.com" class="text-blue-600 font-bold hover:underline break-all">hanagu.teaching@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
 <div class="container" id="quiz-container">
     <div class="header">
         <div class="status">Round <span id="round-display">1</span></div>
         <div class="status"><span id="current-count">1</span> / <span id="total-count">0</span></div>
     </div>
 
-    <div class="card">
-        <div class="word" id="word-display">word</div>
-        <div class="pronunciation" id="pronunciation-display">/wɜːd/</div>
+    <div class="card relative">
+        <!-- 발음 듣기용 스피커 버튼 -->
+        <button onclick="playTTS()" class="absolute top-6 right-6 p-4 bg-slate-50 text-blue-600 rounded-full hover:bg-blue-100 hover:text-blue-700 transition shadow-sm border border-slate-200" title="Listen to pronunciation">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+        </button>
+
+        <div class="word font-black" id="word-display">word</div>
+        <div class="pronunciation animate-pulse" id="pronunciation-display">/wɜːd/</div>
     </div>
 
     <div class="options-grid" id="options-container">
@@ -245,73 +321,73 @@
 </div>
 
 <script>
-    // Data mapping based on the provided list
+    // Data mapping based on the provided list with simple English definitions added
     const vocabularyData = [
-        { word: "element", pron: "/ˈelɪmənt/", kr: "요소, 성분", cn: "元素 (yuán sù)", jp: "要素 (ようそ)" },
-        { word: "factor", pron: "/ˈfæktər/", kr: "요인, 인자", cn: "因素 (yīn sù)", jp: "要因 (よういん)" },
-        { word: "relationship", pron: "/rɪˈleɪʃnʃɪp/", kr: "관계, 관련", cn: "关系 (guān xì)", jp: "関係 (かんけい)" },
-        { word: "increase", pron: "/ɪnˈkriːs/", kr: "증가하다", cn: "增加 (zēng jiā)", jp: "増加する (ぞうかする)" },
-        { word: "decrease", pron: "/dɪˈkriːs/", kr: "감소하다", cn: "减少 (jiǎn shǎo)", jp: "減少する (げんしょうする)" },
-        { word: "similar", pron: "/ˈsɪmələr/", kr: "비슷한, 유사한", cn: "相似的 (xiāng sì de)", jp: "似ている (にている)" },
-        { word: "different", pron: "/ˈdɪfrənt/", kr: "다른, 차이가 나는", cn: "不同的 (bù tóng de)", jp: "異なる (ことなる)" },
-        { word: "communication", pron: "/kəˌmjuːnɪˈkeɪʃn/", kr: "의사소통, 통신", cn: "交流 (jiāo liú)", jp: "コミュニケーション" },
-        { word: "representation", pron: "/ˌreprɪzenˈteɪʃn/", kr: "표현, 묘사, 대표", cn: "表现, 代表 (biǎo xiàn, dài biǎo)", jp: "表現, 描写 (ひょうげん, びょうしゃ)" },
-        { word: "chart", pron: "/tʃɑːrt/", kr: "도표, 차트", cn: "图表 (tú biǎo)", jp: "図表 (ずひょう)" },
-        { word: "graph", pron: "/ɡræf/", kr: "그래프", cn: "图表, 曲线图 (tú biǎo, qū xiàn tú)", jp: "グラフ" },
-        { word: "diagram", pron: "/ˈdaɪəɡræm/", kr: "도해, 다이어그램", cn: "图解 (tú jiě)", jp: "図解 (ずかい)" },
-        { word: "model", pron: "/ˈmɑːdl/", kr: "모형, 모델", cn: "模型 (mó xíng)", jp: "模型 (もけい)" },
-        { word: "demonstrate", pron: "/ˈdemənstreɪt/", kr: "입증하다, 보여주다", cn: "证明, 演示 (zhèng míng, yǎn shì)", jp: "実証する, 示す (じっしょうする, しめす)" },
-        { word: "describe", pron: "/dɪˈskraɪb/", kr: "묘사하다, 서술하다", cn: "描述 (miáo shù)", jp: "描写する (びょうしゃする)" },
-        { word: "summarize", pron: "/ˈsʌməraɪz/", kr: "요약하다", cn: "总结 (zǒng jié)", jp: "要約する (ようやくする)" },
-        { word: "infer", pron: "/ɪnˈfɜːr/", kr: "추론하다", cn: "推断 (tuī duàn)", jp: "推論する (すいろんする)" },
-        { word: "characteristic", pron: "/ˌkærəktəˈrɪstɪk/", kr: "특징, 특성", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)" },
-        { word: "feature", pron: "/ˈfiːtʃər/", kr: "특징, 이목구비", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)" },
-        { word: "property", pron: "/ˈprɑːpərti/", kr: "성질, 재산", cn: "性质, 财产 (xìng zhì, cái chǎn)", jp: "性質, 財産 (せいしつ, ざいさん)" },
-        { word: "function", pron: "/ˈfʌŋkʃn/", kr: "기능, 작용", cn: "功能 (gōng néng)", jp: "機能 (きのう)" },
-        { word: "variety", pron: "/vəˈraɪəti/", kr: "다양성, 품종", cn: "多样性, 品种 (duō yàng xìng, pǐn zhǒng)", jp: "多様性 (たようせい)" },
-        { word: "analyze", pron: "/ˈænəlaɪz/", kr: "분석하다", cn: "分析 (fēn xī)", jp: "分析する (ぶんせきする)" },
-        { word: "examine", pron: "/ɪɡˈzæmɪn/", kr: "조사하다, 검토하다", cn: "检查 (jiǎn chá)", jp: "調査する (ちょうさする)" },
-        { word: "evaluate", pron: "/ɪˈvæljueɪt/", kr: "평가하다", cn: "评估 (píng gū)", jp: "評価する (ひょうかする)" },
-        { word: "represent", pron: "/ˌreprɪˈzent/", kr: "대표하다, 나타내다", cn: "代表 (dài biǎo)", jp: "代表する, 表す (だいひょうする, あらわす)" },
-        { word: "organize", pron: "/ˈɔːrɡənaɪz/", kr: "조직하다, 정리하다", cn: "组织 (zǔ zhī)", jp: "組織する, 整理する (そしきする, せいりする)" },
-        { word: "period", pron: "/ˈpɪriəd/", kr: "기간, 시대", cn: "时期 (shí qī)", jp: "期間, 時代 (きかん, じだい)" },
-        { word: "region", pron: "/ˈriːdʒən/", kr: "지역, 지방", cn: "地区 (dì qū)", jp: "地域 (ちいき)" },
-        { word: "system", pron: "/ˈsɪstəm/", kr: "체계, 시스템", cn: "系统 (xì tǒng)", jp: "体系, システム (たいけい)" },
-        { word: "quantity", pron: "/ˈkwɑːntəti/", kr: "양, 수량", cn: "数量 (shù liàng)", jp: "量, 数量 (りょう, すうりょう)" },
-        { word: "quality", pron: "/ˈkwɑːləti/", kr: "질, 품질", cn: "质量 (zhì liàng)", jp: "質, 品質 (しつ, ひんしつ)" },
-        { word: "amount", pron: "/əˈmaʊnt/", kr: "총액, 양", cn: "数量, 总额 (shù liàng, zǒng é)", jp: "量, 総額 (りょう, そうがく)" },
-        { word: "investigate", pron: "/ɪnˈvestɪɡeɪt/", kr: "조사하다, 수사하다", cn: "调查 (diào chá)", jp: "調査する (ちょうさする)" },
-        { word: "survey", pron: "/ˈsɜːrveɪ/", kr: "설문조사, 조사하다", cn: "调查 (diào chá)", jp: "調査, 測量 (ちょうさ, そくりょう)" },
-        { word: "research", pron: "/ˈriːsɜːrtʃ/", kr: "연구, 조사", cn: "研究 (yán jiū)", jp: "研究 (けんきゅう)" },
-        { word: "record", pron: "/ˈrekərd/", kr: "기록, 기록하다", cn: "记录 (jì lù)", jp: "記録する (きろくする)" },
-        { word: "collect", pron: "/kəˈlekt/", kr: "수집하다, 모으다", cn: "收集 (shōu jí)", jp: "集める (あつめる)" },
-        { word: "evidence", pron: "/ˈevɪdəns/", kr: "증거, 흔적", cn: "证据 (zhèng jù)", jp: "証拠 (しょうこ)" },
-        { word: "data", pron: "/ˈdeɪtə/", kr: "자료, 데이터", cn: "数据 (shù jù)", jp: "データ" },
-        { word: "result", pron: "/rɪˈzʌlt/", kr: "결과", cn: "结果 (jié guǒ)", jp: "結果 (けっか)" },
-        { word: "conclusion", pron: "/kənˈkluːʒn/", kr: "결론", cn: "结论 (jié lùn)", jp: "結論 (けつろん)" },
-        { word: "reason", pron: "/ˈriːzn/", kr: "이유, 원인", cn: "原因 (yuán yīn)", jp: "理由 (りゆう)" },
-        { word: "source", pron: "/sɔːrs/", kr: "원천, 출처", cn: "来源 (lái yuán)", jp: "源, 出処 (みなもと, しゅっしょ)" },
-        { word: "explain", pron: "/ɪkˈspleɪn/", kr: "설명하다", cn: "解释 (jiě shì)", jp: "説明する (せつめいする)" },
-        { word: "predict", pron: "/prɪˈdɪkt/", kr: "예측하다", cn: "预测 (yù cè)", jp: "予測する (よそくする)" },
-        { word: "refer to", pron: "/rɪˈfɜːr tu/", kr: "~을 언급하다, 참조하다", cn: "提及, 参考 (tí jí, cān kǎo)", jp: "言及する, 参照する (げんきゅうする, さんしょうする)" },
-        { word: "define", pron: "/dɪˈfaɪn/", kr: "정의하다", cn: "定义 (dìng yì)", jp: "定義する (ていぎする)" },
-        { word: "cause", pron: "/kɔːz/", kr: "원인, 야기하다", cn: "原因, 导致 (yuán yīn, dǎo zhì)", jp: "原因, 引き起こす (げんいん, ひきおこす)" },
-        { word: "effect", pron: "/ɪˈfekt/", kr: "영향, 결과, 효과", cn: "效果, 影响 (xiào guǒ, yǐng xiǎng)", jp: "効果, 影響 (こうか, えいきょう)" },
-        { word: "affect", pron: "/əˈfekt/", kr: "영향을 미치다", cn: "影响 (yǐng xiǎng)", jp: "影響を及ぼす (えいきょうをおよぼす)" },
-        { word: "impact", pron: "/ˈɪmpækt/", kr: "강력한 영향, 충격", cn: "影响, 冲击 (yǐng xiǎng, chōng jī)", jp: "影響, 衝撃 (えいきょう, しょうげき)" },
-        { word: "influence", pron: "/ˈɪnfluəns/", kr: "영향력, 영향을 주다", cn: "影响 (yǐng xiǎng)", jp: "影響 (えいきょう)" },
-        { word: "structure", pron: "/ˈstrʌktʃər/", kr: "구조, 체계", cn: "结构 (jié gòu)", jp: "構造 (こうぞう)" },
-        { word: "environment", pron: "/ɪnˈvaɪrənmənt/", kr: "환경", cn: "环境 (huán jìng)", jp: "環境 (かんきょう)" },
-        { word: "observe", pron: "/əbˈzɜːrv/", kr: "관찰하다, 준수하다", cn: "观察 (guān chá)", jp: "観察する (かんさつする)" },
-        { word: "notice", pron: "/ˈnoʊtɪs/", kr: "알아차리다, 공지", cn: "注意, 通知 (zhù yì, tōng zhī)", jp: "気付く, 知らせ (きづく, しらせ)" },
-        { word: "compare", pron: "/kəmˈper/", kr: "비교하다", cn: "比较 (bǐ jiào)", jp: "比較する (ひかくする)" },
-        { word: "contrast", pron: "/ˈkɑːntræst/", kr: "대조하다, 차이", cn: "对比 (duì bǐ)", jp: "対照する (たいしょうする)" },
-        { word: "classify", pron: "/ˈklæsɪfaɪ/", kr: "분류하다", cn: "分类 (fēn lèi)", jp: "分類する (ぶんるいする)" },
-        { word: "identify", pron: "/aɪˈdentɪfaɪ/", kr: "확인하다, 식별하다", cn: "识别, 鉴定 (shí bié, jiàn dìng)", jp: "特定する (とくていする)" },
-        { word: "process", pron: "/ˈprɑːses/", kr: "과정, 처리하다", cn: "过程, 处理 (guò chéng, chǔ lǐ)", jp: "過程, 処理する (かてい, しょりする)" },
-        { word: "experiment", pron: "/ɪkˈsperɪmənt/", kr: "실험", cn: "实验 (shí yàn)", jp: "実験 (じっけん)" },
-        { word: "conduct", pron: "/kənˈdʌkt/", kr: "수행하다, 행동", cn: "进行, 行为 (jìn xíng, xíng wéi)", jp: "実施する, 行動 (じっしする, こうどう)" },
-        { word: "measure", pron: "/ˈmeʒər/", kr: "측정하다, 조치", cn: "测量, 措施 (cè liáng, cuò shī)", jp: "測る, 措置 (はかる, そち)" }
+        { word: "element", pron: "/ˈelɪmənt/", kr: "요소, 성분", cn: "元素 (yuán sù)", jp: "要素 (ようそ)", def: "A basic or simple part of something bigger" },
+        { word: "factor", pron: "/ˈfæktər/", kr: "요인, 인자", cn: "因素 (yīn sù)", jp: "要因 (よういん)", def: "One of the things that causes a result" },
+        { word: "relationship", pron: "/rɪˈleɪʃnʃɪp/", kr: "관계, 관련", cn: "关系 (guān xì)", jp: "関係 (かんけい)", def: "How two or more things are connected to each other" },
+        { word: "increase", pron: "/ɪnˈkriːs/", kr: "증가하다", cn: "增加 (zēng jiā)", jp: "増加する (ぞ우かする)", def: "To make or become larger in size or number" },
+        { word: "decrease", pron: "/dɪˈkriːs/", kr: "감소하다", cn: "减少 (jiǎn shǎo)", jp: "減少する (げんしょうする)", def: "To make or become smaller in size or number" },
+        { word: "similar", pron: "/ˈsɪmələr/", kr: "비슷한, 유사한", cn: "相似的 (xiāng sì de)", jp: "似ている (にている)", def: "Looking or being almost the same, but not exact" },
+        { word: "different", pron: "/ˈdɪfrənt/", kr: "다른, 차이가 나는", cn: "不同的 (bù tóng de)", jp: "異なる (ことなる)", def: "Not the same as another thing" },
+        { word: "communication", pron: "/kəˌmjuːnɪˈkeɪʃn/", kr: "의사소통, 통신", cn: "交流 (jiāo liú)", jp: "コミュニケーション", def: "Sharing ideas, feelings, or information with others" },
+        { word: "representation", pron: "/ˌreprɪzenˈteɪʃn/", kr: "표현, 묘사, 대표", cn: "表现, 代表 (biǎo xiàn, dài biǎo)", jp: "表現, 描写 (ひょうげん, びょうしゃ)", def: "A sign, picture, or model that shows something else" },
+        { word: "chart", pron: "/tʃɑːrt/", kr: "도표, 차트", cn: "图表 (tú biǎo)", jp: "図表 (ずひょう)", def: "A drawing that shows information with shapes or symbols" },
+        { word: "graph", pron: "/ɡræf/", kr: "그래프", cn: "图表, 曲线图 (tú biǎo, qū xiàn tú)", jp: "グラフ", def: "A drawing that uses lines or bars to show numbers" },
+        { word: "diagram", pron: "/ˈdaɪəɡræm/", kr: "도해, 다이어그램", cn: "图解 (tú jiě)", jp: "図解 (ずかい)", def: "A simple drawing that explains how something works" },
+        { word: "model", pron: "/ˈmɑːdl/", kr: "모형, 모델", cn: "模型 (mó xíng)", jp: "模型 (もけい)", def: "A small copy or version of an object" },
+        { word: "demonstrate", pron: "/ˈdemənstreɪt/", kr: "입증하다, 보여주다", cn: "证明, 演示 (zhèng míng, yǎn shì)", jp: "実証する, 示す (じっしょうする, しめす)", def: "To show or explain how something works by doing it" },
+        { word: "describe", pron: "/dɪˈskraɪb/", kr: "묘사하다, 서술하다", cn: "描述 (miáo sù)", jp: "描写する (びょうしゃする)", def: "To tell or write about what something is like" },
+        { word: "summarize", pron: "/ˈsʌməraɪz/", kr: "요약하다", cn: "总结 (zǒng jié)", jp: "要約する (ようやくする)", def: "To tell only the most important parts of a story" },
+        { word: "infer", pron: "/ɪnˈfɜːr/", kr: "추론하다", cn: "推断 (tuī duàn)", jp: "推論する (すいろんする)", def: "To make a guess using the facts you know" },
+        { word: "characteristic", pron: "/ˌkærəktəˈrɪstɪk/", kr: "특징, 특성", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)", def: "A special feature that belongs to only one thing" },
+        { word: "feature", pron: "/ˈfiːtʃər/", kr: "특징, 이목구비", cn: "特征 (tè zhēng)", jp: "特徴 (とくちょう)", def: "An important or interesting part of something" },
+        { word: "property", pron: "/ˈprɑːpərti/", kr: "성질, 재산", cn: "性质, 财产 (xìng zhì, cái chǎn)", jp: "性質, 財産 (せいしつ, ざいさん)", def: "A natural quality of something, like being hard or soft" },
+        { word: "function", pron: "/ˈfʌŋkʃn/", kr: "기능, 작용", cn: "功能 (gōng néng)", jp: "機能 (きのう)", def: "The natural purpose or job of something" },
+        { word: "variety", pron: "/vəˈrawɪəti/", kr: "다양성, 품종", cn: "多样性, 品种 (duō yàng xìng, pǐn zhǒng)", jp: "多样性 (たようせい)", def: "Many different types of something" },
+        { word: "analyze", pron: "/ˈænəlaɪz/", kr: "분석하다", cn: "分析 (fēn xī)", jp: "分析する (ぶんせきする)", def: "To study something very carefully to understand it" },
+        { word: "examine", pron: "/ɪɡˈzæmɪn/", kr: "조사하다, 검토하다", cn: "检查 (jiǎn chá)", jp: "調査する (ちょうさする)", def: "To look at something very closely to check it" },
+        { word: "evaluate", pron: "/ɪˈvæljueɪt/", kr: "평가하다", cn: "评估 (píng gū)", jp: "評価する (ひょうかする)", def: "To judge how good or useful something is" },
+        { word: "represent", pron: "/ˌreprɪˈzent/", kr: "대표하다, 나타내다", cn: "代表 (dài biǎo)", jp: "代表する, 表す (だいひょうする, あらわす)", def: "To stand for or be a sign of something" },
+        { word: "organize", pron: "/ˈɔːrɡənaɪz/", kr: "조직하다, 정리하다", cn: "组织 (zǔ zhī)", jp: "组织する, 整理する (そしきする, せいりする)", def: "To put things into a neat and clear order" },
+        { word: "period", pron: "/ˈpɪriəd/", kr: "기간, 시대", cn: "时期 (shí qī)", jp: "期間, 時代 (きかん, じだい)", def: "A specific length of time in history or life" },
+        { word: "region", pron: "/ˈriːdʒən/", kr: "지역, 지방", cn: "地区 (dì qū)", jp: "地域 (ちいき)", def: "A large area or part of a country or the world" },
+        { word: "system", pron: "/ˈsɪstəm/", kr: "체계, 시스템", cn: "系统 (xì tǒng)", jp: "体系, 시스템 (たいけい)", def: "A set of parts working together to do a job" },
+        { word: "quantity", pron: "/ˈkwɒntəti/", kr: "양, 수량", cn: "数量 (shù liàng)", jp: "量, 数量 (りょう, すうりょう)", def: "An amount of something that you can measure or count" },
+        { word: "quality", pron: "/ˈkwɒlɪti/", kr: "질, 품질", cn: "质量 (zhì liàng)", jp: "質, 品質 (しつ, ひんしつ)", def: "How good or well-made something is" },
+        { word: "amount", pron: "/əˈmaʊnt/", kr: "총액, 양", cn: "数量, 总额 (shù liàng, zۆng é)", jp: "量, 총액 (りょう, そうがく)", def: "How much of something there is" },
+        { word: "investigate", pron: "/ɪnˈvestɪɡeɪt/", kr: "조사하다, 수사하다", cn: "调查 (diào chá)", jp: "調査する (ちょうさする)", def: "To look closely at something to find the truth" },
+        { word: "survey", pron: "/ˈsɜːrveɪ/", kr: "설문조사, 조사하다", cn: "调查 (diào chá)", jp: "调查, 测量 (ちょうさ, そくりょう)", def: "To ask many people questions to find information" },
+        { word: "research", pron: "/ˈriːsɜːrtʃ/", kr: "연구, 조사", cn: "研究 (yán jiū)", jp: "研究 (けんきゅう)", def: "Careful study of a subject to find facts" },
+        { word: "record", pron: "/ˈrekərd/", kr: "기록, 기록하다", cn: "记录 (jì lù)", jp: "记录する (きろくする)", def: "To write down or save information for later" },
+        { word: "collect", pron: "/kəˈlekt/", kr: "수집하다, 모으다", cn: "收集 (shōu jí)", jp: "集める (あつめる)", def: "To bring together things from different places" },
+        { word: "evidence", pron: "/ˈevɪdəns/", kr: "증거, 흔적", cn: "证据 (zhèng jù)", jp: "证据 (しょうこ)", def: "Facts or signs that show something is true" },
+        { word: "data", pron: "/ˈdeɪtə/", kr: "자료, 데이터", cn: "数据 (shù jù)", jp: "数据 (shù jù)", def: "Facts, numbers, or information used to learn" },
+        { word: "result", pron: "/rɪˈzʌlt/", kr: "결과", cn: "结果 (jié guǒ)", jp: "結果 (けっか)", def: "Something that happens because of an action" },
+        { word: "conclusion", pron: "/kənˈkluːʒn/", kr: "결론", cn: "结论 (jié lùn)", jp: "結論 (けつろん)", def: "An opinion or decision you make after learning facts" },
+        { word: "reason", pron: "/ˈriːzn/", kr: "이유, 원인", cn: "原因 (yuán yīn)", jp: "理由 (りゆう)", def: "Why something happens or why you do something" },
+        { word: "source", pron: "/sɔːrs/", kr: "원천, 출처", cn: "来源 (lái yuán)", jp: "源, 出処 (みなもと, しゅっしょ)", def: "Where something comes from or starts" },
+        { word: "explain", pron: "/ɪkˈspleɪn/", kr: "설명하다", cn: "解释 (jiě shì)", jp: "説明する (せつめいする)", def: "To make something clear or easy to understand" },
+        { word: "predict", pron: "/prɪˈdɪkt/", kr: "예측하다", cn: "预测 (yù cè)", jp: "予測する (よそくする)", def: "To guess what will happen in the future" },
+        { word: "refer to", pron: "/rɪˈfɜːr tu/", kr: "~을 언급하다, 참조하다", cn: "提及, 参考 (tí jí, cān kǎo)", jp: "言及する, 参照する (げんきゅうする, さんしょうする)", def: "To look at something for help or information" },
+        { word: "define", pron: "/dɪˈfaɪn/", kr: "정의하다", cn: "定义 (dìng yì)", jp: "定義する (ていぎする)", def: "To explain the exact meaning of a word" },
+        { word: "cause", pron: "/kɔːz/", kr: "원인, 야기하다", cn: "原因, 导致 (yuán yīn, dǎo zhì)", jp: "原因, 引き起こす (げんいん, ひきおこす)", def: "Someone or something that makes something happen" },
+        { word: "effect", pron: "/ɪˈfekt/", kr: "영향, 결과, 효과", cn: "效果, 影响 (xiào guǒ, yǐng xiǎng)", jp: "効果, 影響 (こうか, えいきょう)", def: "A change that happens because of a cause" },
+        { word: "affect", pron: "/əˈfekt/", kr: "영향을 미치다", cn: "影响 (yǐng xiǎng)", jp: "影響を及ぼす (えいきょうをおよぼす)", def: "To make a change or have an effect on something" },
+        { word: "impact", pron: "/ˈɪmpækt/", kr: "강력한 영향, 충격", cn: "影响, 冲击 (yǐng xiǎng, chōng jī)", jp: "影响, 冲击 (えいきょう, しょうげき)", def: "A strong, powerful effect or influence" },
+        { word: "influence", pron: "/ˈɪnfluəns/", kr: "영향력, 영향을 주다", cn: "影响 (yǐng xiǎng)", jp: "影響 (えいきょう)", def: "The power to change how someone thinks or acts" },
+        { word: "structure", pron: "/ˈstrʌktʃər/", kr: "구조, 체계", cn: "结构 (jié gòu)", jp: "構造 (こうぞう)", def: "How the parts of something are put together" },
+        { word: "environment", pron: "/ɪnˈvaɪrənmənt/", kr: "환경", cn: "环境 (huán jìng)", jp: "環境 (かんきょう)", def: "The air, water, land, and natural world around us" },
+        { word: "observe", pron: "/əbˈzɜːrv/", kr: "관찰하다, 준수하다", cn: "观察 (guān chá)", jp: "観察する (かんさつする)", def: "To watch something carefully to learn about it" },
+        { word: "notice", pron: "/ˈnoʊtɪs/", kr: "알아차리다, 공지", cn: "注意, 通知 (zhù yì, tōng zhī)", jp: "気付く, 知らせ (きづく, しらせ)", def: "To see or become aware of something" },
+        { word: "compare", pron: "/kəmˈper/", kr: "비교하다", cn: "比较 (bǐ jiào)", jp: "比較する (ひかくする)", def: "To look at two things to see how they are alike" },
+        { word: "contrast", pron: "/ˈgɑːntræst/", kr: "대조하다, 차이", cn: "对比 (duì bǐ)", jp: "対照する (たいしょうする)", def: "To look at two things to see how they are different" },
+        { word: "classify", pron: "/ˈklæsɪfaɪ/", kr: "분류하다", cn: "分类 (fēn lèi)", jp: "分類する (ぶんるいする)", def: "To group things together by their types" },
+        { word: "identify", pron: "/aɪˈdentɪfaɪ/", kr: "확인하다, 식별하다", cn: "识别, 鉴定 (shí bié, jiàn dìng)", jp: "特定する (とくていする)", def: "To find out or show who or what something is" },
+        { word: "process", pron: "/ˈprɑːses/", kr: "과정, 처리하다", cn: "过程, 处理 (guò chéng, chǔ lǐ)", jp: "過程, 処理する (かてい, しょりする)", def: "A series of steps that happen to get a result" },
+        { word: "experiment", pron: "/ɪkˈsperɪmənt/", kr: "실험", cn: "实验 (shí yàn)", jp: "実験 (じっけん)", def: "A science test to find out how something works" },
+        { word: "conduct", pron: "/kənˈdʌkt/", kr: "수행하다, 행동", cn: "进行, 行为 (jìn xíng, xíng wéi)", jp: "实施する, 行동 (じっしする, こうどう)", def: "To organize and do a specific activity" },
+        { word: "measure", pron: "/ˈmeʒər/", kr: "측정하다, 조치", cn: "测量, 措施 (cè liáng, cuò shī)", jp: "測る, 措置 (はかる, そち)", def: "To find the size, weight, or amount of something" }
     ];
 
     let currentPool = [];
@@ -371,7 +447,7 @@
         generateOptions();
     }
 
-    // Generate 4 multiple choice options
+    // Generate 4 multiple choice options in a tidy 2x2 grid (Set to clean White base)
     function generateOptions() {
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -394,10 +470,12 @@
         let allOptions = [currentQuestion, ...wrongOptions];
         allOptions = shuffleArray(allOptions);
 
-        allOptions.forEach(opt => {
+        allOptions.forEach((opt) => {
             const btn = document.createElement('button');
-            btn.className = 'option-btn';
+            // 기본을 깔끔한 흰색 배경 버튼으로 통일 (theme 파스텔 클래스 대신 기본 클래스만 적용)
+            btn.className = `option-btn`;
             btn.innerHTML = `
+                <span class="option-def">${opt.def}</span>
                 <span class="option-kr">${opt.kr}</span>
                 <span class="option-cn">${opt.cn}</span>
                 <span class="option-jp">${opt.jp}</span>
@@ -421,14 +499,14 @@
             // Find and highlight correct answer
             const krSpan = btn.querySelector('.option-kr').innerText;
             if (krSpan === currentQuestion.kr) {
-                btn.classList.add('correct');
+                btn.className = 'option-btn correct';
             }
         });
 
         if (isCorrect) {
-            btnElement.classList.add('correct');
+            btnElement.className = 'option-btn correct';
         } else {
-            btnElement.classList.add('wrong');
+            btnElement.className = 'option-btn wrong';
             // Store incorrect word to show in next round
             incorrectWordsPool.push(currentQuestion);
         }
@@ -458,14 +536,23 @@
         }
     }
 
+    // Text-to-Speech (TTS)
+    function playTTS() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // 진행 중인 소리가 있다면 정지
+            const cleanWord = currentQuestion.word.replace(/\([^)]*\)/g, '').trim();
+            const utterance = new SpeechSynthesisUtterance(cleanWord);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; // 어린 학생들이 인지하기 좋게 0.85배속 설정
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("TTS is not supported in this browser.");
+        }
+    }
+
     // Start the app initially
     resetFullGame();
 
 </script>
-
-  <!-- Universal CSS Watermark (Works perfectly without Tailwind) -->
-  <div style="position: fixed; top: 16px; right: 16px; color: rgba(251, 146, 60, 0.6); font-weight: bold; font-size: 1.1rem; text-align: right; line-height: 1.2; letter-spacing: 0.05em; pointer-events: none; user-select: none; z-index: 9999;">
-    Ms. Hana's<br>ELL Class
-  </div>
 </body>
 </html>
